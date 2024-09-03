@@ -103,7 +103,7 @@ When using JWTs (JSON Web Tokens) in a Spring-based server for authentication an
       - Ensuring the token was issued by a trusted source (`iss` claim).
       - Optionally verifying the audience (`aud` claim).
 - 4.d. **Authentication Context**:
-   - If the token is valid, the server extracts user details (e.g., `sub`, `roles`) from the token and sets the authentication context in Spring Security (`SecurityContextHolder`).
+   - **If the token is valid, the server extracts user details (e.g., `sub`, `roles`)** from the token and sets the authentication context in Spring Security (`SecurityContextHolder`).
    - This context is used **to authorize access to secured endpoints based on roles or permissions**.
 - 4.c. **Request Processing**:
    - The request is passed to the appropriate controller or handler method.
