@@ -117,6 +117,7 @@ When using JWTs (JSON Web Tokens) in a Spring-based server for authentication an
    - The client can send a request to a `/refresh-token` endpoint with the refresh token.
    - If valid, the server issues a new JWT without requiring the user to log in again.
 
+![JWT and secret](./img/1-jwt-secret-flow.png?raw=true)
 
 ***Workflow summary***:
 
