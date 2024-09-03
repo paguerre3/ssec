@@ -78,38 +78,38 @@ JWTs are widely used in modern web applications for secure and efficient authent
 
 When using JWTs (JSON Web Tokens) in a Spring-based server for authentication and authorization, the typical flow can be described as follows:
 
-***1. User Authentication (Login)***:
-- a. **Client Request**: A client (e.g., a web app, mobile app) **sends** a POST request to the server’s `/login` or `/authenticate` endpoint with the **user's credentials (usually username and password)**.
-- b. **Server Verification**:
+***User Authentication (Login)***:
+- 1.a. **Client Request**: A client (e.g., a web app, mobile app) **sends** a POST request to the server’s `/login` or `/authenticate` endpoint with the **user's credentials (usually username and password)**.
+- 2.a. **Server Verification**:
    - The Spring server receives the request and verifies the credentials against the user details stored in the database (or another user management service).
    - **If the credentials are valid, the server generates a JWT containing claims that identify the user and their roles or permissions**.
-- c. **JWT Creation**:
+- 2.b. **JWT Creation**:
    - The server creates a JWT with:
       - **Header**: Specifies the signing algorithm (e.g., `HS256`).
       - **Payload**: Contains claims such as `sub` (subject, typically the username), `exp` (expiration time), and any custom claims (e.g., user roles).
       - **Signature**: The server **signs the token using a secret key or a private key**.
-- d. **Token Response**: The server sends the JWT back to the client, typically in the response body or as part of the response headers (e.g., `Authorization: Bearer <token>`).
+- 3.a. **Token Response**: The server sends the JWT back to the client, typically in the response body or as part of the response headers (e.g., `Authorization: Bearer <token>`).
 
-***2. Subsequent Requests (Using JWT for Authorization)***:
-- a. **Client Request with JWT**:
+***Subsequent Requests (Using JWT for Authorization)***:
+- 4.a. **Client Request with JWT**:
    - For subsequent API requests, the client includes the JWT in the `Authorization` header: `Authorization: Bearer <token>`.
-- b. **Server Interception**:
+- 4.b. **Server Interception**:
    - The Spring server intercepts the request via a filter, typically a `JwtAuthenticationFilter` or similar.
-- c. **Token Validation**:
+- 4.c. **Token Validation**:
    - The filter extracts the JWT from the `Authorization` header and validates it.
    - Validation steps include:
       - Checking the token’s signature to ensure it hasn’t been tampered with.
       - Verifying the token’s expiration time (`exp` claim).
       - Ensuring the token was issued by a trusted source (`iss` claim).
       - Optionally verifying the audience (`aud` claim).
-- d. **Authentication Context**:
+- 4.d. **Authentication Context**:
    - If the token is valid, the server extracts user details (e.g., `sub`, `roles`) from the token and sets the authentication context in Spring Security (`SecurityContextHolder`).
    - This context is used **to authorize access to secured endpoints based on roles or permissions**.
-- **Request Processing**:
+- 4.c. **Request Processing**:
    - The request is passed to the appropriate controller or handler method.
    - The server processes the request and returns the response to the client.
 
-***3. Token Expiration and Refresh***:
+***Token Expiration and Refresh***:
 - **Token Expiration**:
    - JWTs typically have an expiration time (`exp` claim). Once expired, the client cannot use the token to access protected resources.
 - **Refresh Token** (Optional):
