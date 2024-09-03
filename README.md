@@ -31,7 +31,7 @@ These claims are *embedded in the payload section* of the JWT and are used to co
     - **Private Claims**: Custom claims created to share information between parties that agree on using them, e.g. `role` and `department`.
 
 *Encoded JWT sample*:
-```text
+```jwt
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
 ```
 *Decoded JWT*:
