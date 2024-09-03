@@ -119,6 +119,7 @@ When using JWTs (JSON Web Tokens) in a Spring-based server for authentication an
 
 
 ***Workflow summary***:
+
 In this flow, JWTs are used to securely manage user sessions without storing state on the server. The Spring server validates and processes each request based on the token provided by the client, ensuring secure and scalable authentication and authorization.
 
 ---
