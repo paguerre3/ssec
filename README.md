@@ -80,9 +80,9 @@ JWTs are widely used in modern web applications for secure and efficient authent
 ---
 ### Further samples and useful links
 - ***Forked Repository***
-
-[Reactive Programing, JWT, MSA and OAuth](https://github.com/paguerre3/Spring-Boot-Tutorials)
+   
+   [Reactive Programing, JWT, MSA and OAuth](https://github.com/paguerre3/Spring-Boot-Tutorials)
 
 - ***JWT Validations***:
-
-[JWT IO](https://jwt.io/) to decode, verify and generate JWTs online.
+   
+   [JWT IO](https://jwt.io/) to decode, verify and generate JWTs online.
