@@ -55,7 +55,7 @@ Verify Signature:
 HMACSHA256(
 base64UrlEncode(header) + "." +
 base64UrlEncode(payload),
-your-256-bit-secret
+⚠️"your-256-bit-secret" --> using "jwt.io" actually you can paste the secret here for verifying!
 )
 ```
 
