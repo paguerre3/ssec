@@ -32,6 +32,9 @@ For example, in a web application:
 
 Both authentication and authorization are critical for ensuring the security and integrity of software systems.
 
+***Authorization Plan Sample***
+![auth plan sample](./img/0-auth-plan-sample.png)
+
 
 ---
 ### JWT (JSON Web Token)
