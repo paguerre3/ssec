@@ -3,6 +3,37 @@ Spring Security Compendium
 
 
 ---
+Authentication and authorization are two fundamental concepts in software security, often used together but serving distinct purposes:
+
+**1. Authentication** is the **process of verifying the identity of a user or system**. It answers the question, 
+**"Who are you?"** The goal is to ensure that the person or system attempting to access resources is indeed who they claim to be.
+
+Common authentication methods include:
+- **Passwords**: The most basic form, where users enter a secret word or phrase.
+- **Multi-Factor Authentication (MFA)**: Combines two or more authentication factors (e.g., something you know, something you have, something you are) to increase security.
+- **Biometrics**: Uses physical characteristics like fingerprints, facial recognition, or retina scans.
+- **OAuth/OpenID Connect**: Tokens are used to authenticate users in web applications and APIs.
+
+**2. Authorization** occurs after authentication and **determines what an authenticated user or system is allowed to do**. It answers the question, **"What can you do?"** This step ensures that users have the appropriate permissions to access specific resources or perform certain actions.
+
+Common approaches to authorization include:
+- **Role-Based Access Control (RBAC)**: Users are assigned roles, and permissions are granted based on those roles.
+- **Access Control Lists (ACLs)**: Permissions are tied to specific resources, with a list specifying who can access each resource.
+- **OAuth Scopes**: Define what resources an authenticated token can access in web services.
+- **Attribute-Based Access Control (ABAC)**: Policies are defined based on attributes of the user, resource, and environment (e.g., time of day).
+
+***How They Work Together***
+1. **Authentication** happens first to confirm the identity of the user.
+2. Once authenticated, **authorization** kicks in to determine what resources the user has permission to access.
+
+For example, in a web application:
+- **Authentication** ensures the user logging in with a username and password is legitimate.
+- **Authorization** checks whether the authenticated user has the rights to view or modify specific data within the application.
+
+Both authentication and authorization are critical for ensuring the security and integrity of software systems.
+
+
+---
 ### JWT (JSON Web Token)
 **JWTs** are **an open, industry standard RFC 7519 method for representing claims securely between two parties**. 
 It is **commonly used for authentication and authorization in web applications**.
