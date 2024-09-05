@@ -1,4 +1,3 @@
-# root/root as user/password with root privileges:
 services:
   mysql:
     image: mysql
@@ -10,12 +9,20 @@ services:
       MYSQL_PASSWORD: pass
     ports:
       - "3306:3306"
+    networks:
+      - my-network
 
   adminer:
     image: adminer
-    #container_name: adminer
     ports:
-      # externally exposed in 8089:
+      # Externally exposed to 8081:
       - "8081:8080"
     depends_on:
       - mysql
+    networks:
+      - my-network
+
+networks:
+  # This is a common pattern in docker-compose files when you want to explicitly create a network for services
+  # but don’t need any specific configuration for the network (e.g., driver, external network, etc.).
+  my-network:
