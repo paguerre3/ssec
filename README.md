@@ -206,6 +206,14 @@ When using JWTs (JSON Web Tokens) in a Spring-based server for authentication an
 
 In this flow, JWTs are used to securely manage user sessions without storing state on the server. The Spring server validates and processes each request based on the token provided by the client, ensuring secure and scalable authentication and authorization.
 
+
+---
+### Requirements
+1. ⚠️Docker must be running before executing Application.
+2. <code>docker-compose -f mysql.yml up -d</code> before running tests.
+3. [Admirer URI](http://localhost:8081/)
+
+
 ---
 ### Further samples and useful links
 - ***Forked Repository***
