@@ -9,7 +9,6 @@ services:
       MYSQL_PASSWORD: pass
       # useful for connecting with admirer:
       MYSQL_ROOT_HOST: '%'
-    command: mysqld --default-authentication-plugin=mysql_native_password --skip-mysqlx
     ports:
       - "3306:3306"
     networks:
