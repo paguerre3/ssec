@@ -1,0 +1,18 @@
+# root/root as user/password credentials
+services:
+  mysql:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      # externally exposed in 8089:
+      - "8089:8080"
+    depends_on:
+      - mysql
