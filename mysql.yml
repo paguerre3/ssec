@@ -5,19 +5,12 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: sec
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: pass
-      # useful for connecting with admirer:
+      # useful for connecting from admirer a.k.a. localhost address of mysql:
       MYSQL_ROOT_HOST: '%'
     ports:
       - "3306:3306"
     networks:
       - my-network
-    volumes:
-      # The docker-entrypoint-initdb.d directory is a special directory used by the MySQL Docker image.
-      # When the MySQL container starts for the first time, it will automatically execute any .sql, .sh, or .sql.gz files found in this directory.
-      # This is useful for initializing the database with schemas, tables, or users.
-      - ./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql
 
   adminer:
     image: adminer
