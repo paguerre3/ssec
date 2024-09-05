@@ -7,6 +7,8 @@ services:
       MYSQL_DATABASE: sec
       MYSQL_USER: admin
       MYSQL_PASSWORD: pass
+      # Use caching_sha2_password by default
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     ports:
       - "3306:3306"
     command: [ '--default-authentication-plugin=caching_sha2_password' ]
