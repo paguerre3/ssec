@@ -7,19 +7,19 @@ services:
       MYSQL_DATABASE: sec
       MYSQL_USER: admin
       MYSQL_PASSWORD: pass
+      # useful for connecting with admirer:
       MYSQL_ROOT_HOST: '%'
     ports:
       - "3306:3306"
     networks:
       - my-network
-    volumes:
-      - ./my.cnf:/etc/mysql/conf.d/my.cnf
+    command: --default-authentication-plugin=caching_sha2_password
 
   adminer:
     image: adminer
     restart: always
     ports:
-      # Externally exposed to 8081:
+      # externally exposed to 8081:
       - "8081:8080"
     depends_on:
       - mysql
