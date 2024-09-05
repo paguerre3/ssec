@@ -10,6 +10,7 @@ services:
 
   adminer:
     image: adminer
+    #container_name: adminer
     ports:
       # externally exposed in 8089:
       - "8089:8080"
