@@ -9,11 +9,13 @@ services:
       MYSQL_PASSWORD: pass
     ports:
       - "3306:3306"
+    command: [ '--default-authentication-plugin=caching_sha2_password' ]
     networks:
       - my-network
 
   adminer:
     image: adminer
+    restart: always
     ports:
       # Externally exposed to 8081:
       - "8081:8080"
