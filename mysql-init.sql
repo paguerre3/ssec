@@ -1,1 +1,1 @@
-alter user 'admin'@'%' IDENTIFIED with mysql_native_password by 'pass';
+ALTER USER 'admin'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'pass';
