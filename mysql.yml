@@ -9,8 +9,6 @@ services:
       MYSQL_PASSWORD: pass
       # useful for connecting with admirer:
       MYSQL_ROOT_HOST: '%'
-      # added to skip time zone info initialization, which can sometimes cause issues
-      MYSQL_INITDB_SKIP_TZINFO: 1
     ports:
       - "3306:3306"
     networks:
