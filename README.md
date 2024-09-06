@@ -100,6 +100,11 @@ By default, when Spring Security is added into a project, web security is applie
 - This setup **allows customization of authentication methods (e.g., basic auth, OAuth, JWT), password encoding, user roles, etc**.
 
 
+***Password Encoders***
+![password_encoder_comparison](./img/2-password-encoders.png?raw=true)
+- Argon2 is the recommendation but is slower compared to others.
+
+
 ---
 ### JWT (JSON Web Token)
 **JWTs** are **an open, industry standard RFC 7519 method for representing claims securely between two parties**. 
