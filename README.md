@@ -58,27 +58,38 @@ By default, when Spring Security is added into a project, web security is applie
 - It **enables Spring Security’s filters** and configuration for web applications.
 - It **provides customization of security policies** by allowing developers **to configure authentication, authorization, and other security mechanisms**.
     ```java
-    @Configuration
-    @EnableWebSecurity
-    public class SecurityConf {
-    
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-            return httpSecurity.
-                    authorizeHttpRequests(registry -> {
-                        // avoid using regex like ^/welcome$ as requestMatchers by default does not use regex matching
-                        // unless explicitly configured to do so.
-                        // Instead, it performs ant-style matching (which uses * and ** wildcards, not regex).
-                        registry.requestMatchers("/home", "/welcome", "/register/user").permitAll();
-                        registry.requestMatchers("/admin/**").hasRole("admin");
-                        registry.requestMatchers("/user/**").hasRole("user");
-                        // this disables default Web Sec form login, i.e. wall including user and pass:
-                        registry.anyRequest().authenticated();
-                    })
-                    // to enable back form login of Spring Web Sec:
-                    .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
-                    .build();
-        }
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+                // Cross-Site Request Forgery (CSRF) is a type of web security vulnerability that tricks a user’s browser
+                // into performing actions they didn’t intend to perform on a different site.
+                // This happens because the browser automatically includes credentials like cookies with each request,
+                // allowing an attacker to exploit the trust a web application has in the user’s browser.
+                // To avoid this CSRF protection is "enabled" by default in Spring Security, i.e.
+                // disallowing calls from all suspicions address that don't belong to the company.
+                // In this case we allow "localhost" because /registration will be performed from a ReST client app
+                // that runs locally:
+                .csrf(cnf -> cnf.csrfTokenRepository(new HttpSessionCsrfTokenRepository())
+                        .requireCsrfProtectionMatcher(new RequestMatcher() {
+                            @Override
+                            public boolean matches(HttpServletRequest request) {
+                                // Disable CSRF only for localhost:
+                                return !isValidHost(request.getRemoteHost());
+                            }
+                        }))
+                .authorizeHttpRequests(registry -> {
+                    // avoid using regex like ^/welcome$ as requestMatchers by default does not use regex matching
+                    // unless explicitly configured to do so.
+                    // Instead, it performs ant-style matching (which uses * and ** wildcards, not regex).
+                    registry.requestMatchers("/home", "/welcome", "/register/user").permitAll();
+                    registry.requestMatchers("/admin/**").hasRole("admin");
+                    registry.requestMatchers("/user/**").hasRole("user");
+                    // this disables default Web Sec form login, i.e. wall including user and pass:
+                    registry.anyRequest().authenticated();
+                })
+                // to enable back form login of Spring Web Sec:
+                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+                .build();
     }
     ```
 `@EnableWebSecurity` is a meta-annotation that imports the necessary Spring Security configuration:

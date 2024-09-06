@@ -42,12 +42,12 @@ public class SecurityCnf {
                 // disallowing calls from all suspicions address that don't belong to the company.
                 // In this case we allow "localhost" because /registration will be performed from a ReST client app
                 // that runs locally:
-                .csrf(csrf -> csrf.csrfTokenRepository(new HttpSessionCsrfTokenRepository())
+                .csrf(cnf -> cnf.csrfTokenRepository(new HttpSessionCsrfTokenRepository())
                         .requireCsrfProtectionMatcher(new RequestMatcher() {
                             @Override
                             public boolean matches(HttpServletRequest request) {
                                 // Disable CSRF only for localhost:
-                                return isValidHost(request.getRemoteHost());
+                                return !isValidHost(request.getRemoteHost());
                             }
                         }))
                 .authorizeHttpRequests(registry -> {
