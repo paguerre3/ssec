@@ -32,6 +32,7 @@ For example, in a web application:
 
 Both authentication and authorization are critical for ensuring the security and integrity of software systems.
 
+
 ---
 ### Authentication and Authorization Sample
 
@@ -68,7 +69,7 @@ By default, when Spring Security is added into a project, web security is applie
                         // avoid using regex like ^/welcome$ as requestMatchers by default does not use regex matching
                         // unless explicitly configured to do so.
                         // Instead, it performs ant-style matching (which uses * and ** wildcards, not regex).
-                        registry.requestMatchers("/home", "/welcome").permitAll();
+                        registry.requestMatchers("/home", "/welcome", "/register/user").permitAll();
                         registry.requestMatchers("/admin/**").hasRole("admin");
                         registry.requestMatchers("/user/**").hasRole("user");
                         // this disables default Web Sec form login, i.e. wall including user and pass:
@@ -211,7 +212,7 @@ In this flow, JWTs are used to securely manage user sessions without storing sta
 ### Requirements
 1. ⚠️Docker must be running before executing Application.
 2. <code>docker-compose -f mysql.yml up -d</code> before running tests.
-3. [Admirer URI](http://localhost:8081/)
+3. [Admirer URI](http://localhost:8081/) -⚠️Must pass **mysql** as **Server** and then username, password and database as established in properties.
 
 
 ---
