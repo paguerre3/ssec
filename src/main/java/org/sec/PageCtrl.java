@@ -19,4 +19,9 @@ public class PageCtrl {
     public String handleUserHome() {
         return "user_home";
     }
+
+    @GetMapping("/login")
+    public String handleMyLogin() {
+        return "my_login";
+    }
 }

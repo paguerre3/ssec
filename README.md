@@ -74,7 +74,8 @@ By default, when Spring Security is added into a project, web security is applie
                             @Override
                             public boolean matches(HttpServletRequest request) {
                                 // Disable CSRF only for localhost:
-                                return !isValidHost(request.getRemoteHost());
+                                var rh = request.getRemoteHost();
+                                return !isValidHost(rh);
                             }
                         }))
                 .authorizeHttpRequests(registry -> {
@@ -87,8 +88,10 @@ By default, when Spring Security is added into a project, web security is applie
                     // this disables default Web Sec form login, i.e. wall including user and pass:
                     registry.anyRequest().authenticated();
                 })
-                // to enable back form login of Spring Web Sec:
-                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+                // to enable Login form of Spring Web Sec -including Logout:
+                //.formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+                // (Note that customizing a Login page disables Logout already provided by Spring Web Sec).
+                .formLogin(cnf -> cnf.loginPage("/login").successHandler(authSuccessMgr).permitAll())
                 .build();
     }
     ```

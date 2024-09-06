@@ -9,8 +9,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,8 +19,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Optional;
 
 @Configuration
@@ -30,6 +26,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SecurityCnf {
     private SysUserDetailsSvc sysUserDetailsSvc;
+    private AuthSuccessMgr authSuccessMgr;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -47,7 +44,8 @@ public class SecurityCnf {
                             @Override
                             public boolean matches(HttpServletRequest request) {
                                 // Disable CSRF only for localhost:
-                                return !isValidHost(request.getRemoteHost());
+                                var rh = request.getRemoteHost();
+                                return !isValidHost(rh);
                             }
                         }))
                 .authorizeHttpRequests(registry -> {
@@ -60,8 +58,10 @@ public class SecurityCnf {
                     // this disables default Web Sec form login, i.e. wall including user and pass:
                     registry.anyRequest().authenticated();
                 })
-                // to enable back form login of Spring Web Sec:
-                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+                // to enable Login form of Spring Web Sec -including Logout:
+                //.formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+                // (Note that customizing a Login page disables Logout already provided by Spring Web Sec).
+                .formLogin(cnf -> cnf.loginPage("/login").successHandler(authSuccessMgr).permitAll())
                 .build();
     }
 
