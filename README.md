@@ -100,8 +100,8 @@ By default, when Spring Security is added into a project, web security is applie
 - This setup **allows customization of authentication methods (e.g., basic auth, OAuth, JWT), password encoding, user roles, etc**.
 
 **3. Load Users to Authenticate and Authorize**:  Create bean annotation with `UserDetailsService` interface inside a Configuration file.
-The **UserDetailService objective is to load valid Users and theirs Roles to compare**
-in order to determine authorization and then authorization of each potential user, e.g.:
+The **UserDetailService objective is to load valid Users and theirs Roles** to compare
+in order **to determine authentication and then authorization** of each potential user, e.g.:
 ```java
     private SysUserDetailsSvc sysUserDetailsSvc;
 
