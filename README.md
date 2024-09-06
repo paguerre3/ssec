@@ -99,6 +99,60 @@ By default, when Spring Security is added into a project, web security is applie
 - With Spring Security 5.7+, the recommended way to configure security is through `SecurityFilterChain` beans instead of extending `WebSecurityConfigurerAdapter`.
 - This setup **allows customization of authentication methods (e.g., basic auth, OAuth, JWT), password encoding, user roles, etc**.
 
+**3. Load Users to Authenticate and Authorize**:  Create bean annotation with `UserDetailsService` interface inside a Configuration file.
+The **UserDetailService objective is to load valid Users and theirs Roles to compare**
+in order to determine authorization and then authorization of each potential user, e.g.:
+```java
+    private SysUserDetailsSvc sysUserDetailsSvc;
+
+    /**
+     * Once enabled it will stop showing auto-generated dev password by default in Spring console.
+     * This service allows handling users.
+     *
+     * @return UserDetailsService
+     */
+    @Bean
+    public UserDetailsService userDetailsService() {
+        //return loadUsersInMemory();
+        return this.loadUsersFromDb();
+    }
+
+    private UserDetailsService loadUsersInMemory() {
+        UserDetails normalUser = User.builder()
+                .username("cami")
+                // encoded password that can't be engineering reversed:
+                .password("$2a$12$VoQJGEDrm4gdDy9tB/SsiuTrI98O.Z6NeIyhttiah7F6M3xq9ER7q")
+                .roles("user")
+                .build();
+        UserDetails adminUser = User.builder()
+                .username("male")
+                // encoded password that can't be engineering reversed:
+                .password("$2a$12$6pd9xnB3IK//QRfg/tJOteHRjgb74JLvkiIVRhRU.JdCeWf8uuEX2")
+                .roles("admin", "user")
+                .build();
+        return new InMemoryUserDetailsManager(normalUser, adminUser);
+    }
+
+    private UserDetailsService loadUsersFromDb() {
+        // reference to the service that loads all users available from DB into Spring Security:
+        return sysUserDetailsSvc;
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        // Database Access Object Provider required for Setting Encoder at "Database Level":
+        DaoAuthenticationProvider daoProvider = new DaoAuthenticationProvider();
+        daoProvider.setPasswordEncoder(passwordEncoder());
+        daoProvider.setUserDetailsService(sysUserDetailsSvc);
+        return daoProvider;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+```
+
 
 ***Password Encoders***
 ![password_encoder_comparison](./img/2-password-encoders.png?raw=true)
