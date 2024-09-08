@@ -282,7 +282,7 @@ In this flow, JWTs are used to securely manage user sessions without storing sta
 
 
 ---
-### How JWT works in Spring
+### JWT implementation with Spring
 1. Add necessary jjwt dependencies, i.e. including `jjwt-api, jjwt-impl, and jjwt-jackson` in `build.gradle`.
 
 
