@@ -288,7 +288,7 @@ In this flow, JWTs are used to securely manage user sessions without storing sta
 3. **Generate JWT** using `using io.jsonwebtoken.Jwts.builder` placing claims, subject, issuedAt, expiration, and signing with secret key **and 
 expose the Token creation as HTTP POST uri for Authenticating** 
 *-as dependency, it requires an `AuthenticationManager` service, placed in `SecurityCnf`,
-that will use the already existent `AuthenticationProvider` service`-*, e.g.:
+that will use the already existent `AuthenticationProvider` service-*, e.g.:
 ```java
 @Service
 public class JwtSvc {
@@ -317,7 +317,7 @@ public class JwtSvc {
     }
 }
 ```
-Inside `SecurityCnf` add bean `AuthenticationManager` and whitelist `/authentication` uri, i.e. `registry.requestMatchers("/home", "/welcome", "/register/user", "/authenticate").permitAll();`:
+Inside `SecurityCnf` add bean `AuthenticationManager` and whitelist `/authentication` uri, i.e. `registry.requestMatchers("/home", "/welcome", "/register/user", "/authenticate").permitAll();`.
 ```java
 @Bean
 public AuthenticationProvider authenticationProvider() {
@@ -334,6 +334,7 @@ public AuthenticationManager authenticationManager() {
     return new ProviderManager(authenticationProvider());
 }
 ```
+Authentication URI:
 ```java
 @RestController
 @AllArgsConstructor
