@@ -1,5 +1,6 @@
 package org.sec.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +36,22 @@ public class JwtSvc {
     private SecretKey buildSecretKey() {
         byte[] decodedKey = Base64.getDecoder().decode(SECRET);
         return Keys.hmacShaKeyFor(decodedKey);
+    }
+
+    public String extractUsername(final String jwt) {
+        return this.getClaims(jwt).getSubject();
+    }
+
+    private Claims getClaims(final String jwt) {
+        return Jwts.parser()
+                .verifyWith(this.buildSecretKey())
+                .build()
+                .parseSignedClaims(jwt)
+                .getPayload();
+    }
+
+    public boolean isTokenExpired(final String jwt) {
+        return this.getClaims(jwt).getExpiration().before(Date.from(Instant.now()));
     }
 }
 

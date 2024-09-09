@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -29,6 +30,7 @@ import java.util.Optional;
 public class SecurityCnf {
     private SysUserDetailsSvc sysUserDetailsSvc;
     private AuthSuccessMgr authSuccessMgr;
+    private AuthFilter authfilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -64,6 +66,8 @@ public class SecurityCnf {
                 //.formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 // (Note that customizing a Login page disables Logout already provided by Spring Web Sec).
                 .formLogin(cnf -> cnf.loginPage("/login").successHandler(authSuccessMgr).permitAll())
+                // add JWT authentication filter before UsernamePasswordAuthenticationFilter provided by Spring Web Sec:
+                .addFilterBefore(authfilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

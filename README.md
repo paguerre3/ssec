@@ -317,7 +317,7 @@ public class JwtSvc {
     }
 }
 ```
-Inside `SecurityCnf` add bean `AuthenticationManager` and whitelist `/authentication` uri, i.e. `registry.requestMatchers("/home", "/welcome", "/register/user", "/authenticate").permitAll();`.
+Inside `SecurityCnf.filterChain(...)` add bean `AuthenticationManager` and whitelist `/authentication` uri, i.e. `registry.requestMatchers("/home", "/welcome", "/register/user", "/authenticate").permitAll();`.
 ```java
 @Bean
 public AuthenticationProvider authenticationProvider() {
@@ -356,6 +356,71 @@ public class AuthCtrl {
 Example of JWT generation and validation:
 ![auth sample](./img/3-auth-sample.png?raw=true)
 
+4. **Validate JWT for doing Authentication and then Authorization** using `AuthFilter` for JWT overriding `OncePerRequestFilter`, 
+i.e. **verifying the Authorization header with the Bearer token in every single request**.
+```java
+@Configuration
+@AllArgsConstructor
+public class AuthFilter extends OncePerRequestFilter {
+    private JwtSvc jwtSvc;
+    private SysUserDetailsSvc userSvc;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String authHeader = request.getHeader("Authorization");
+        String bearerPrefix = "Bearer ";
+        if (StringUtils.isEmpty(authHeader) || !authHeader.startsWith(bearerPrefix)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // Extract JWT from header:
+        String jwt = authHeader.substring(bearerPrefix.length());
+        String username = this.jwtSvc.extractUsername(jwt);
+        if (!StringUtils.isEmpty(username)
+                // ensure user isn't already authenticated:
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userSvc.loadUserByUsername(username);
+            if (userDetails != null && !this.jwtSvc.isTokenExpired(jwt)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        username,
+                        userDetails.getPassword(),
+                        userDetails.getAuthorities()
+                );
+                // set the details of the client who is making teh request for tracking purposes,
+                // e.g. for running an investigation under production environment:
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                // Do authentication success:
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+        filterChain.doFilter(request, response);
+    }
+}
+```
+Inside `SecurityCnf.filterChain(...)` add JWT authentication filter before UsernamePasswordAuthenticationFilter provided by Spring Web Sec,
+i.e. `.addFilterBefore(authfilter, UsernamePasswordAuthenticationFilter.class)`.
+
+Provide helper methods inside JWT service for the `AuthFilter`.
+```java
+    public String extractUsername(final String jwt) {
+    return this.getClaims(jwt).getSubject();
+}
+
+private Claims getClaims(final String jwt) {
+    return Jwts.parser()
+            .verifyWith(this.buildSecretKey())
+            .build()
+            .parseSignedClaims(jwt)
+            .getPayload();
+}
+
+public boolean isTokenExpired(final String jwt) {
+    return this.getClaims(jwt).getExpiration().before(Date.from(Instant.now()));
+}
+```
+Example of JWT authentication and authorization:
+![auth request sample](./img/4-auth-request-sample.png?raw=true)
 
 ---
 ### Requirements
