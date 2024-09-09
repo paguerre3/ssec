@@ -284,8 +284,77 @@ In this flow, JWTs are used to securely manage user sessions without storing sta
 ---
 ### JWT implementation with Spring
 1. Add necessary jjwt dependencies, i.e. including `jjwt-api, jjwt-impl, and jjwt-jackson` in `build.gradle`.
-2. **Create Secret key** using `using io.jsonwebtoken.Jwts` with a signing algorithm like *HS512* -maker located under test package for this project.
-3. 
+2. **Create Secret key** using `using io.jsonwebtoken.Jwts.SIGN` with a signing algorithm like *HS512* -maker located under test package for this project.
+3. **Generate JWT** using `using io.jsonwebtoken.Jwts.builder` placing claims, subject, issuedAt, expiration, and signing with secret key **and 
+expose the Token creation as HTTP POST uri for Authenticating** 
+*-as dependency, it requires an `AuthenticationManager` service, placed in `SecurityCnf`,
+that will use the already existent `AuthenticationProvider` service`-*, e.g.:
+```java
+@Service
+public class JwtSvc {
+    // Secret shouldn't be injected in code under production environment, instead is recommended to place it under
+    // a secured location like a secret service or storage (Obtained from JwtSecretMakerTest#createSecretKey()):
+    private static final String SECRET = "... {SECRET KEY GENERATED} ...";
+    private static final String ISSUER = "https://github.com/paguerre3";
+    private static final long EXPIRATION_IN_MILLIS = TimeUnit.MINUTES.toMillis(30);
+
+    public String generateToken(final UserDetails userDetails) {
+        final var NOW = Instant.now();
+        return Jwts.builder()
+                // only one claim added:
+                .claim("iss", ISSUER)
+                .subject(userDetails.getUsername())
+                .issuedAt(Date.from(NOW))
+                .expiration(Date.from(NOW.plusMillis(EXPIRATION_IN_MILLIS)))
+                .signWith(this.buildSecretKey())
+                // convert to json format:
+                .compact();
+    }
+
+    private SecretKey buildSecretKey() {
+        byte[] decodedKey = Base64.getDecoder().decode(SECRET);
+        return Keys.hmacShaKeyFor(decodedKey);
+    }
+}
+```
+Inside `SecurityCnf` add bean `AuthenticationManager` and whitelist `/authentication` uri, i.e. `registry.requestMatchers("/home", "/welcome", "/register/user", "/authenticate").permitAll();`:
+```java
+@Bean
+public AuthenticationProvider authenticationProvider() {
+    // Database Access Object Provider required for Setting Encoder at "Database Level":
+    DaoAuthenticationProvider daoProvider = new DaoAuthenticationProvider();
+    daoProvider.setPasswordEncoder(passwordEncoder());
+    daoProvider.setUserDetailsService(sysUserDetailsSvc);
+    return daoProvider;
+}
+
+@Bean
+public AuthenticationManager authenticationManager() {
+    // new Auth Manager required for JWT Authentication:
+    return new ProviderManager(authenticationProvider());
+}
+```
+```java
+@RestController
+@AllArgsConstructor
+public class AuthCtrl {
+    private AuthenticationManager authMgr;
+    private JwtSvc jwtSvc;
+    private SysUserDetailsSvc userSvc;
+
+    @PostMapping("/authenticate")
+    public String authenticateAndGetToken(@RequestBody LoginForm form) {
+        var authentication = authMgr.authenticate(new UsernamePasswordAuthenticationToken(form.username(), form.password()));
+        if (authentication.isAuthenticated()) {
+            return jwtSvc.generateToken(userSvc.loadUserByUsername(form.username()));
+        }
+        throw new UsernameNotFoundException("Invalid credentials");
+    }
+}
+```
+Example of JWT generation and validation:
+![auth sample](./img/3-auth-sample.png?raw=true)
+
 
 ---
 ### Requirements

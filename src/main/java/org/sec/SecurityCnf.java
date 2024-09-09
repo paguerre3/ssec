@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import org.sec.model.SysUserDetailsSvc;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -52,7 +54,7 @@ public class SecurityCnf {
                     // avoid using regex like ^/welcome$ as requestMatchers by default does not use regex matching
                     // unless explicitly configured to do so.
                     // Instead, it performs ant-style matching (which uses * and ** wildcards, not regex).
-                    registry.requestMatchers("/home", "/welcome", "/register/user").permitAll();
+                    registry.requestMatchers("/home", "/welcome", "/register/user", "/authenticate").permitAll();
                     registry.requestMatchers("/admin/**").hasRole("admin");
                     registry.requestMatchers("/user/**").hasRole("user");
                     // this disables default Web Sec form login, i.e. wall including user and pass:
@@ -105,6 +107,12 @@ public class SecurityCnf {
         daoProvider.setPasswordEncoder(passwordEncoder());
         daoProvider.setUserDetailsService(sysUserDetailsSvc);
         return daoProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        // new Auth Manager required for JWT Authentication:
+        return new ProviderManager(authenticationProvider());
     }
 
     @Bean
