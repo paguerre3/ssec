@@ -438,3 +438,5 @@ Example of JWT authentication and authorization:
 - ***JWT Validations***:
    
    [JWT IO](https://jwt.io/) to decode, verify and generate JWTs online.
+
+- [SDL](https://github.com/paguerre3/gobc/tree/main/docs/sdl#readme)
